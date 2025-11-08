@@ -1,0 +1,36 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/ERC20WSY202330552841.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.20;\n\ncontract ERC20WSY202330552841 {\n    // 代币基本信息\n    string private _name;\n    string private _symbol;\n    uint8 private _decimals;\n    \n    // 代币总量\n    uint256 private _totalSupply;\n    \n    // 余额映射\n    mapping(address => uint256) private _balances;\n    \n    // 授权映射 (owner => (spender => amount))\n    mapping(address => mapping(address => uint256)) private _allowances;\n    \n    // 事件定义\n    event Transfer(address indexed from, address indexed to, uint256 value);\n    event Approval(address indexed owner, address indexed spender, uint256 value);\n    \n    // 构造函数\n    constructor() {\n        _name = \"WSY Token\";  // 修改为 \"WSY Token\"\n        _symbol = \"WSY\";      // 修改为 \"WSY\"\n        _decimals = 18;\n        _totalSupply = 0;\n    }\n    \n    // ERC20 标准函数\n    function name() public view returns (string memory) {\n        return _name;\n    }\n    \n    function symbol() public view returns (string memory) {\n        return _symbol;\n    }\n    \n    function decimals() public view returns (uint8) {\n        return _decimals;\n    }\n    \n    function totalSupply() public view returns (uint256) {\n        return _totalSupply;\n    }\n    \n    function balanceOf(address account) public view returns (uint256) {\n        return _balances[account];\n    }\n    \n    function transfer(address to, uint256 value) public returns (bool) {\n        require(to != address(0), \"ERC20: transfer to the zero address\");\n        require(_balances[msg.sender] >= value, \"ERC20: insufficient balance\");\n        \n        _balances[msg.sender] -= value;\n        _balances[to] += value;\n        \n        emit Transfer(msg.sender, to, value);\n        return true;\n    }\n    \n    function transferFrom(address from, address to, uint256 value) public returns (bool) {\n        require(from != address(0), \"ERC20: transfer from the zero address\");\n        require(to != address(0), \"ERC20: transfer to the zero address\");\n        require(_balances[from] >= value, \"ERC20: insufficient balance\");\n        require(_allowances[from][msg.sender] >= value, \"ERC20: insufficient allowance\");\n        \n        _balances[from] -= value;\n        _balances[to] += value;\n        _allowances[from][msg.sender] -= value;\n        \n        emit Transfer(from, to, value);\n        return true;\n    }\n    \n    function approve(address spender, uint256 value) public returns (bool) {\n        require(spender != address(0), \"ERC20: approve to the zero address\");\n        \n        _allowances[msg.sender][spender] = value;\n        \n        emit Approval(msg.sender, spender, value);\n        return true;\n    }\n    \n    function allowance(address owner, address spender) public view returns (uint256) {\n        return _allowances[owner][spender];\n    }\n    \n    function mint(address to, uint256 value) public {\n        require(to != address(0), \"ERC20: mint to the zero address\");\n        \n        _totalSupply += value;\n        _balances[to] += value;\n        \n        emit Transfer(address(0), to, value);\n    }\n    \n    function burn(address from, uint256 value) public {\n        require(from != address(0), \"ERC20: burn from the zero address\");\n        require(_balances[from] >= value, \"ERC20: burn amount exceeds balance\");\n        \n        _balances[from] -= value;\n        _totalSupply -= value;\n        \n        emit Transfer(from, address(0), value);\n    }\n    \n    function burn(uint256 value) public {\n        require(_balances[msg.sender] >= value, \"ERC20: burn amount exceeds balance\");\n        \n        _balances[msg.sender] -= value;\n        _totalSupply -= value;\n        \n        emit Transfer(msg.sender, address(0), value);\n    }\n}"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "paris",
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}
